@@ -44,6 +44,7 @@ let usuarioSchema = new Schema({
 
 });
 
+// function for doesn´t send password to client
 usuarioSchema.methods.toJSON = function() {
 
     let user = this;
@@ -51,8 +52,6 @@ usuarioSchema.methods.toJSON = function() {
     delete userObject.password;
 
     return userObject;
-
-
 }
 
 usuarioSchema.plugin(uniqueValidator, { message: '{PATH} Debe ser unico' });

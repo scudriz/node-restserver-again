@@ -11,9 +11,16 @@ app.use(bodyParser.json());
 
 app.use(require('./routes/usuario'));
 
-mongoose.connect('mongodb://localhost:27017/cafe', { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }, (err, res) => {
-    if (err) throw err;
 
+let options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false
+
+};
+mongoose.connect(process.env.URLDB, options, (err, res) => {
+    if (err) throw err;
     console.log("Base de datos Online");
 });
 

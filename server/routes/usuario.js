@@ -1,13 +1,38 @@
 const express = require('express');
 
 const bcrypt = require('bcrypt');
-
+const _ = require('underscore');
 const Usuario = require('../models/usuario');
 
 const app = express();
 
 app.get('/usuarios', function(req, res) {
-    res.json('getUsuarios LOCAL!!!');
+
+    let desde = Number(req.query.desde) || 0;
+    let limite = Number(req.query.limite) || 5;
+
+    Usuario.find({ estado: true }, 'nombre email role estado google')
+        .skip(desde)
+        .limit(limite)
+        .exec((err, usuarios) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            Usuario.count({ estado: true }, (err, conteo) => {
+                res.json({
+                    ok: true,
+                    usuarios,
+                    total: conteo
+                });
+
+            })
+
+        });
+
 })
 
 app.post('/usuarios', function(req, res) {
@@ -44,14 +69,64 @@ app.post('/usuarios', function(req, res) {
 app.put('/usuarios/:id', function(req, res) {
 
     let id = req.params.id;
+    //To pick only values that can be updated
+    let body = _.pick(req.body, ['nombre', 'img', 'email', 'role', 'estado']);
 
-    res.json({
-        id
+    Usuario.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, usuarioDB) => {
+
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+
+
+        res.json({
+            ok: true,
+            usuario: usuarioDB
+        });
     });
+
 })
 
-app.delete('/usuarios', function(req, res) {
-    res.json('DeleteUsuarios');
+app.delete('/usuarios/:id', function(req, res) {
+
+    let id = req.params.id;
+
+    Usuario.findById(id)
+        .exec((err, usuario) => {
+
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            if (usuario.estado == true) {
+
+                Usuario.findByIdAndUpdate(id, { estado: false }, { new: true }, (err, usuarioDesactivado) => {
+
+                    return res.json({
+                        ok: true,
+                        usuario: usuarioDesactivado
+                    });
+                });
+
+            } else {
+
+                return res.status(400).json({
+                    ok: false,
+                    err: "Usuario ya no existe"
+                });
+            }
+
+
+
+        });
+
+
 })
 
 module.exports = app;
