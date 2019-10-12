@@ -4,13 +4,14 @@ const app = express();
 var mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
-// parse application/x-www-form-urlencoded
+
+// middlewares // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
-app.use(require('./routes/usuario'));
-
+//se cargan las rutas
+app.use(require('./routes/index'));
 
 let options = {
     useNewUrlParser: true,
@@ -19,9 +20,10 @@ let options = {
     useFindAndModify: false
 
 };
-mongoose.connect(process.env.URLDB, options, (err, res) => {
+
+mongoose.connect(process.env.MONGO_URI, options, (err, res) => {
     if (err) throw err;
-    console.log("Base de datos Online");
+    console.log("Base de datos Online ");
 });
 
 app.listen(process.env.PORT, () => {

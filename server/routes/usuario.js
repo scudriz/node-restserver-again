@@ -1,12 +1,11 @@
 const express = require('express');
-
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
 const Usuario = require('../models/usuario');
-
+const { verificaToken, verificaRole } = require('../middlewares/autenticacion');
 const app = express();
 
-app.get('/usuarios', function(req, res) {
+app.get('/usuarios', verificaToken, (req, res) => {
 
     let desde = Number(req.query.desde) || 0;
     let limite = Number(req.query.limite) || 5;
@@ -22,7 +21,7 @@ app.get('/usuarios', function(req, res) {
                 });
             }
 
-            Usuario.count({ estado: true }, (err, conteo) => {
+            Usuario.countDocuments({ estado: true }, (err, conteo) => {
                 res.json({
                     ok: true,
                     usuarios,
@@ -35,7 +34,7 @@ app.get('/usuarios', function(req, res) {
 
 })
 
-app.post('/usuarios', function(req, res) {
+app.post('/usuarios', [verificaToken, verificaRole], (req, res) => {
 
     let body = req.body;
 
@@ -66,7 +65,7 @@ app.post('/usuarios', function(req, res) {
 
 })
 
-app.put('/usuarios/:id', function(req, res) {
+app.put('/usuarios/:id', [verificaToken, verificaRole], (req, res) => {
 
     let id = req.params.id;
     //To pick only values that can be updated
@@ -90,7 +89,7 @@ app.put('/usuarios/:id', function(req, res) {
 
 })
 
-app.delete('/usuarios/:id', function(req, res) {
+app.delete('/usuarios/:id', [verificaToken, verificaRole], (req, res) => {
 
     let id = req.params.id;
 
