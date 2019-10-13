@@ -5,7 +5,7 @@ const Usuario = require('../models/usuario');
 const { verificaToken, verificaRole } = require('../middlewares/autenticacion');
 const app = express();
 
-app.get('/usuarios', verificaToken, (req, res) => {
+app.get('/usuarios', (req, res) => {
 
     let desde = Number(req.query.desde) || 0;
     let limite = Number(req.query.limite) || 5;
@@ -37,6 +37,16 @@ app.get('/usuarios', verificaToken, (req, res) => {
 app.post('/usuarios', [verificaToken, verificaRole], (req, res) => {
 
     let body = req.body;
+
+    if (!body.password) {
+        return res.status(400).json({
+            ok: false,
+            err: {
+                message: "La contraseña es requerida"
+            }
+        });
+
+    }
 
     let usuario = new Usuario({
         nombre: body.nombre,
