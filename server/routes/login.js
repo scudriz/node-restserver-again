@@ -19,15 +19,6 @@ app.post('/login', (req, res) => {
             });
         }
 
-        if (!usuarioDB.estado) {
-            return res.status(400).json({
-                ok: false,
-                err: {
-                    message: 'Usuario o Contraseña (incorrecta)'
-                }
-            });
-        }
-
 
         if (!usuarioDB) {
             return res.status(400).json({
@@ -37,6 +28,16 @@ app.post('/login', (req, res) => {
                 }
             });
         }
+
+        if (!usuarioDB.estado) {
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    message: 'Usuario o Contraseña (incorrecta)'
+                }
+            });
+        }
+
 
         if (!bcrypt.compareSync(body.password, usuarioDB.password)) {
             return res.status(400).json({
