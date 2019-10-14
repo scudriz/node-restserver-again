@@ -5,6 +5,10 @@ const app = express();
 
 app.get('/categorias', verificaToken, (req, res) => {
 
+    return res.json({
+        seed: process.env.SEED
+    })
+
     let desde = Number(req.query.desde) || 0;
     let limite = Number(req.query.limite) || 5;
 
