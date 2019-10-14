@@ -8,7 +8,7 @@ process.env.PORT = process.env.PORT || 3000;
 // SEED
 // #######################
 
-process.env.SEED = process.env.SEDD || 'SEED-DESARROLLO';
+process.env.SEED = process.env.SEED || 'SEED-DESARROLLO';
 
 // #######################
 // CADUCIDAD
