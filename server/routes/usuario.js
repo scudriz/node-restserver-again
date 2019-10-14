@@ -10,7 +10,7 @@ app.get('/usuarios', (req, res) => {
     let desde = Number(req.query.desde) || 0;
     let limite = Number(req.query.limite) || 5;
 
-    Usuario.find({ estado: true, role: 'USER_ROLE' }, 'nombre email role estado google')
+    Usuario.find({ estado: true, role: 'USER_ROLE' }, 'nombre email role estado google img')
         .skip(desde)
         .limit(limite)
         .exec((err, usuarios) => {
